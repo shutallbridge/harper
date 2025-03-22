@@ -17,8 +17,8 @@ function Button(props: ButtonProps) {
       className={cn(
         "flex items-center gap-x-3",
         // p-*
-        [size === "md" && "px-4"],
-        [size === "sm" && "px-3"],
+        [size === "md" && "px-4 py-2"],
+        [size === "sm" && "px-3 py-2"],
         className
       )}
       {...rest}
@@ -33,17 +33,7 @@ function Button(props: ButtonProps) {
           {icon}
         </div>
       ) : null}
-      <Slottable>
-        <div
-          className={cn(
-            // p-*
-            [size === "md" && "py-3"],
-            [size === "sm" && "py-2"]
-          )}
-        >
-          {children}
-        </div>
-      </Slottable>
+      <Slottable>{children}</Slottable>
     </ButtonBase>
   );
 }
