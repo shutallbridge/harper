@@ -22,8 +22,8 @@ function ButtonBase(props: ButtonBaseProps) {
         [variant === "ghost" && "text-gray-950"],
         // bg-*
         [variant === "primary" && "bg-fuchsia-950 hover:bg-fuchsia-900"],
-        [variant === "secondary" && "bg-white hover:bg-gray-50"],
-        [variant === "ghost" && "bg-none hover:bg-gray-50"],
+        [variant === "secondary" && "bg-white hover:bg-gray-100"],
+        [variant === "ghost" && "bg-none hover:bg-gray-100"],
         // border-*
         [variant === "primary" && "border-none"],
         [variant === "secondary" && "border border-gray-200"],

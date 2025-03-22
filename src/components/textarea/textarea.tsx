@@ -27,7 +27,7 @@ function Textarea(props: TextareaProps) {
   return (
     <InputWrapper unwrapped={unwrapped} label={label}>
       {({ id }) => (
-        <InputBase asChild className="px-3 py-2" {...rest}>
+        <InputBase asChild className="px-3 py-2 resize-none" {...rest}>
           <TextareaAutosize
             maxRows={maxRows}
             minRows={minRows}

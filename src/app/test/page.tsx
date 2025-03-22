@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { LuCircle } from "react-icons/lu";
+import { LuCircle, LuArrowUp, LuPaperclip } from "react-icons/lu";
 
 import { Button } from "@/components/button";
 import { IconButton } from "@/components/icon-button";
@@ -23,7 +23,7 @@ export default function Page() {
       <Button variant="primary" icon={<LuCircle />}>
         Button
       </Button>
-      <Button asChild icon={<LuCircle />}>
+      <Button asChild variant="secondary" icon={<LuCircle />}>
         <a target="_blank" href="https://example.com">
           Link
         </a>
@@ -38,7 +38,25 @@ export default function Page() {
         onChange={(e) => setName(e.target.value)}
       />
       <Input unwrapped />
+      <Input
+        label="Website"
+        leftElement={
+          <div className="bg-gray-100 flex items-center px-5 text-gray-500 select-none">
+            https://
+          </div>
+        }
+      />
       <Textarea label="Feedback" />
+      <Textarea
+        unwrapped
+        className="p-4 resize-none"
+        rightElement={
+          <div className="flex gap-x-2 self-start pr-4 pt-4">
+            <IconButton variant="ghost" icon={<LuPaperclip />} />
+            <IconButton type="submit" icon={<LuArrowUp />} />
+          </div>
+        }
+      />
       <div className="w-52 flex flex-col gap-y-10">
         <span>Uncontrolled</span>
         <Select
