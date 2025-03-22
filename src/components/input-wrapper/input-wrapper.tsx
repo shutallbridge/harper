@@ -23,7 +23,7 @@ function InputWrapper(props: InputWrapperProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-2">
       <label htmlFor={id}>{label}</label>
       {dimorphicRender(children, [{ id }])}
     </div>

@@ -18,7 +18,7 @@ function InputBase(props: InputBaseProps) {
   return (
     <Comp
       className={cn(
-        "block bg-white border border-gray-400 rounded-md text-gray-950 placeholder:text-gray-500",
+        "block w-full bg-white border border-gray-400 rounded-md text-gray-950 placeholder:text-gray-500",
         styles.input,
         className
       )}

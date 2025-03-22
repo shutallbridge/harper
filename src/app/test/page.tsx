@@ -7,6 +7,7 @@ import { Button } from "@/components/button";
 import { IconButton } from "@/components/icon-button";
 import { Input } from "@/components/input";
 import { Select } from "@/components/select";
+import { Textarea } from "@/components/textarea";
 
 export default function Page() {
   const [value, setValue] = React.useState<string>("AU");
@@ -37,6 +38,7 @@ export default function Page() {
         onChange={(e) => setName(e.target.value)}
       />
       <Input unwrapped />
+      <Textarea label="Feedback" />
       <div className="w-52 flex flex-col gap-y-10">
         <span>Uncontrolled</span>
         <Select
