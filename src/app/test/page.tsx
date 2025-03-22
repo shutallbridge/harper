@@ -15,16 +15,24 @@ export default function Page() {
     setValue(newValue);
   };
 
+  const [name, setName] = React.useState("");
+
   return (
-    <div className="p-8 flex flex-col gap-4 items-start">
+    <div className="p-8 flex flex-col gap-14 items-start">
       <Button variant="primary" icon={<LuCircle />}>
         Button
       </Button>
       <IconButton size="md" variant="ghost" icon={<LuCircle />} />
-      <Input />
-      <div className="w-52">
+      <Input
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <Input unwrapped />
+      <div className="w-52 flex flex-col gap-y-10">
         <span>Uncontrolled</span>
         <Select
+          label="Country"
           data={[
             { label: "New Zealand", value: "NZ" },
             { label: "Japan", value: "JP" },
@@ -32,7 +40,7 @@ export default function Page() {
           ]}
         />
       </div>
-      <div className="w-52">
+      <div className="w-52 flex flex-col gap-y-10">
         <span>Controlled value: {value}</span>
         <Select
           data={[
