@@ -1,16 +1,15 @@
+import { Slottable } from "@radix-ui/react-slot";
+
 import { cn } from "@/lib/utils";
 import { type ButtonBaseProps, ButtonBase } from "@/components/button-base";
 
-type IconButtonProps = Omit<
-  {
-    icon: React.ReactNode;
-    size?: "sm" | "md";
-  } & ButtonBaseProps,
-  "children"
->;
+type IconButtonProps = {
+  icon: React.ReactNode;
+  size?: "sm" | "md";
+} & ButtonBaseProps;
 
 function IconButton(props: IconButtonProps) {
-  const { icon, className, size = "md", ...rest } = props;
+  const { icon, size = "md", className, children, ...rest } = props;
 
   return (
     <ButtonBase
@@ -23,6 +22,7 @@ function IconButton(props: IconButtonProps) {
       {...rest}
     >
       {icon}
+      <Slottable>{children}</Slottable>
     </ButtonBase>
   );
 }

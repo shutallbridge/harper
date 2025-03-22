@@ -22,7 +22,15 @@ export default function Page() {
       <Button variant="primary" icon={<LuCircle />}>
         Button
       </Button>
-      <IconButton size="md" variant="ghost" icon={<LuCircle />} />
+      <Button asChild icon={<LuCircle />}>
+        <a target="_blank" href="https://example.com">
+          Link
+        </a>
+      </Button>
+      <IconButton icon={<LuCircle />} />
+      <IconButton asChild icon={<LuCircle />}>
+        <a target="_blank" href="https://www.example.com"></a>
+      </IconButton>
       <Input
         label="Name"
         value={name}

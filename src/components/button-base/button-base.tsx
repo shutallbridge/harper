@@ -1,15 +1,19 @@
+import { Slot } from "@radix-ui/react-slot";
+
 import { cn } from "@/lib/utils";
 
 type ButtonBaseProps = {
-  children: React.ReactNode;
+  asChild?: boolean;
   variant?: "primary" | "secondary" | "ghost";
 } & React.ComponentPropsWithoutRef<"button">;
 
 function ButtonBase(props: ButtonBaseProps) {
-  const { children, variant = "primary", className } = props;
+  const { asChild = false, variant = "primary", className, ...rest } = props;
+
+  const Comp = asChild ? Slot : "button";
 
   return (
-    <button
+    <Comp
       className={cn(
         "rounded-md cursor-pointer",
         // text-*
@@ -26,9 +30,8 @@ function ButtonBase(props: ButtonBaseProps) {
         [variant === "ghost" && "border-none"],
         className
       )}
-    >
-      {children}
-    </button>
+      {...rest}
+    />
   );
 }
 

@@ -1,13 +1,16 @@
+import React from "react";
+import { Slottable } from "@radix-ui/react-slot";
+
 import { cn } from "@/lib/utils";
 import { type ButtonBaseProps, ButtonBase } from "@/components/button-base";
 
 type ButtonProps = {
-  size?: "sm" | "md";
   icon?: React.ReactNode;
+  size?: "sm" | "md";
 } & ButtonBaseProps;
 
 function Button(props: ButtonProps) {
-  const { children, className, size = "md", icon, ...rest } = props;
+  const { icon, size = "md", className, children, ...rest } = props;
 
   return (
     <ButtonBase
@@ -23,7 +26,6 @@ function Button(props: ButtonProps) {
       {icon ? (
         <div
           className={cn(
-            // prettier-ignore
             [size === "md" && "text-2xl"],
             [size === "sm" && "text-xl"]
           )}
@@ -31,15 +33,17 @@ function Button(props: ButtonProps) {
           {icon}
         </div>
       ) : null}
-      <div
-        className={cn(
-          // prettier-ignore
-          [size === "md" && "py-3"],
-          [size === "sm" && "py-2"]
-        )}
-      >
-        {children}
-      </div>
+      <Slottable>
+        <div
+          className={cn(
+            // p-*
+            [size === "md" && "py-3"],
+            [size === "sm" && "py-2"]
+          )}
+        >
+          {children}
+        </div>
+      </Slottable>
     </ButtonBase>
   );
 }
