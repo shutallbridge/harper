@@ -1,16 +1,7 @@
-"use client";
+"use server";
 
-import { screens, EmptyScreen } from "@/screens";
+import { screen } from "@/screens/candidates-new";
 
-function getCurrentScreen() {
-  return (
-    screens.find((screen) => (screen.id = "candidates-new"))?.screen ??
-    EmptyScreen
-  );
-}
-
-export default function Page() {
-  const Comp = getCurrentScreen();
-
-  return <Comp />;
+export default async function Page() {
+  return <>{screen.render({ candidateId: "123" })}</>;
 }

@@ -1,14 +1,16 @@
 "use client";
 
 import React from "react";
-import { useChat } from "@ai-sdk/react";
 import {
   LuMessageSquare,
   LuHistory,
   LuPaperclip,
   LuArrowUp,
 } from "react-icons/lu";
+import { z } from "zod";
 
+import { useAssistant } from "@/lib/assistant";
+import { useAppState } from "@/lib/app-context";
 import { Button } from "@/components/button";
 import { IconButton } from "@/components/icon-button";
 import { Textarea } from "@/components/textarea";
@@ -16,7 +18,33 @@ import { Panel, PanelHeader, PanelContent } from "@/components/panel";
 import { Messages, MessageGroup, TextMessage } from "@/components/messages";
 
 export default function Page() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const {} = useAppState();
+
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    addClientRunDynamic,
+  } = useAssistant({
+    utils: {},
+  });
+
+  const popConfetti = React.useCallback(() => {
+    console.log("console confetti!");
+    return "a confetti was popped";
+  }, []);
+
+  React.useEffect(() => {
+    const remove = addClientRunDynamic({
+      name: "popConfetti",
+      description: "A function to pop confetti on the user's screen",
+      parameters: z.object({}),
+      handler: ({}) => popConfetti(),
+    });
+
+    return remove();
+  }, [popConfetti, addClientRunDynamic]);
 
   const onTextareaKeyDown = (
     e:
