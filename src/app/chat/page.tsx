@@ -18,7 +18,7 @@ import { Panel, PanelHeader, PanelContent } from "@/components/panel";
 import { Messages, MessageGroup, TextMessage } from "@/components/messages";
 
 export default function Page() {
-  const {} = useAppState();
+  const { dispatch } = useAppState();
 
   const {
     messages,
@@ -27,7 +27,7 @@ export default function Page() {
     handleSubmit,
     addClientRunDynamic,
   } = useAssistant({
-    utils: {},
+    utils: { dispatch },
   });
 
   const popConfetti = React.useCallback(() => {

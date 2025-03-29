@@ -75,9 +75,7 @@ function AppStateProvider(props: AppStateProviderProps) {
   const { children } = props;
 
   const [state, dispatch] = React.useReducer(appStateReducer, {
-    status: "screen",
-    screenId: "",
-    props: {},
+    status: "closed",
   });
 
   return (

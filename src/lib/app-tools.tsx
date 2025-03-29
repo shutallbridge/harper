@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { Tools } from "@/lib/tools";
 import { ClientUtils } from "@/app/providers";
+import { screens } from "@/screens";
 
 // nothing for now
 type ServerUtils = Record<string, never>;
@@ -26,6 +27,19 @@ serverAwareTools.addClientRunStatic({
   handler: () => {
     return "The user is in Sydney";
   },
+});
+
+screens.forEach((screen) => {
+  const { id: screenId, description, propsSchema } = screen;
+  serverAwareTools.addClientRunStatic({
+    name: screenId,
+    description,
+    parameters: propsSchema,
+    handler: ({ utils }) => {
+      utils.dispatch({ type: "open_screen", screenId, props: {} });
+      return "Successfully navigated the user";
+    },
+  });
 });
 
 const exportedClientTools = serverAwareTools.exportClientRelevant();

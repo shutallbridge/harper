@@ -65,6 +65,10 @@ class Tools<
     this.tools = [];
   }
 
+  public debug() {
+    console.log(this.tools);
+  }
+
   public addServerRunStatic<TParameters extends AnyZodObject>(args: {
     name: string;
     description: string;
@@ -126,20 +130,28 @@ class Tools<
   }
 
   public exportManifests(): JsonToolManifest[] {
-    return this.tools.map<JsonToolManifest>((tool) => {
-      const { type, ephemeral, name, description, parameters } = tool;
+    return (
+      this.tools
+        // todo: implement filtering API to make this more explicit
+        .filter((tool) => tool.type === "client_run_dynamic")
+        .map<JsonToolManifest>((tool) => {
+          const { type, ephemeral, name, description, parameters } = tool;
 
-      const jsonParameters =
-        type === "manifest_only" ? parameters : zodSchema(parameters);
+          // need the following code for wider types
+          // const jsonParameters =
+          //   type === "manifest_only" ? parameters : zodSchema(parameters);
 
-      return {
-        type,
-        ephemeral,
-        name,
-        description,
-        jsonParameters,
-      };
-    });
+          const jsonParameters = zodSchema(parameters);
+
+          return {
+            type,
+            ephemeral,
+            name,
+            description,
+            jsonParameters,
+          };
+        })
+    );
   }
 
   public loadManifests(jsonToolManifests: JsonToolManifest[]) {
