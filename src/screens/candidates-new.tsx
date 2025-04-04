@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { type Screen as ScreenType } from "@/lib/screens";
 import { Button } from "@/components/button";
-import { Panel, PanelHeader, PanelContent } from "@/components/panel";
+import { PanelHeader, PanelContent } from "@/components/panel";
 import { Input } from "@/components/input";
 import { Textarea } from "@/components/textarea";
 import { useAssistant } from "@/lib/assistant";
@@ -110,7 +110,7 @@ function Screen(props: ScreenProps) {
   }, [addClientRunDynamic]);
 
   return (
-    <Panel className="min-w-xl">
+    <>
       <PanelHeader className="flex justify-between items-center">
         <h1 className="text-gray-950 font-medium text-xl">
           Register New Candidate
@@ -178,7 +178,7 @@ function Screen(props: ScreenProps) {
           </div>
         </form>
       </PanelContent>
-    </Panel>
+    </>
   );
 }
 

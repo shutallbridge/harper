@@ -14,7 +14,7 @@ import { useAppState } from "@/lib/app-context";
 import { Button } from "@/components/button";
 import { IconButton } from "@/components/icon-button";
 import { Textarea } from "@/components/textarea";
-import { Panel, PanelHeader, PanelContent } from "@/components/panel";
+import { PanelHeader, PanelContent } from "@/components/panel";
 import { Messages, MessageGroup, TextMessage } from "@/components/messages";
 
 export default function Page() {
@@ -58,7 +58,7 @@ export default function Page() {
   };
 
   return (
-    <Panel className="flex-1 relative">
+    <>
       <PanelHeader className="flex justify-between items-center">
         <div className="flex gap-x-3">
           <div className="w-6 h-6 rounded-full bg-fuchsia-300" />
@@ -117,6 +117,6 @@ export default function Page() {
           />
         </form>
       </PanelContent>
-    </Panel>
+    </>
   );
 }

@@ -36,6 +36,7 @@ screens.forEach((screen) => {
     description,
     parameters: propsSchema,
     handler: ({ utils }) => {
+      // console.log(`navigation handler: ${screenId}`);
       utils.dispatch({ type: "open_screen", screenId, props: {} });
       return "Successfully navigated the user";
     },

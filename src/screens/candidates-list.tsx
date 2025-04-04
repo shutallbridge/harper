@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { type Screen as ScreenType } from "@/lib/screens";
 import { Button } from "@/components/button";
-import { Panel, PanelHeader, PanelContent } from "@/components/panel";
+import { PanelHeader, PanelContent } from "@/components/panel";
 
 const propsSchema = z.object({});
 
@@ -88,7 +88,7 @@ function Screen(props: ScreenProps) {
   ];
 
   return (
-    <Panel className="min-w-xl">
+    <>
       <PanelHeader className="flex justify-between items-center">
         <h1 className="text-gray-950 font-medium text-xl">Candidates List</h1>
         <Button>Add New</Button>
@@ -120,7 +120,7 @@ function Screen(props: ScreenProps) {
           </table>
         </div>
       </PanelContent>
-    </Panel>
+    </>
   );
 }
 
