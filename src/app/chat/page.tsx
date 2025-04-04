@@ -7,7 +7,6 @@ import {
   LuPaperclip,
   LuArrowUp,
 } from "react-icons/lu";
-import { z } from "zod";
 
 import { useAssistant } from "@/lib/assistant";
 import { useAppState } from "@/lib/app-context";
@@ -20,31 +19,37 @@ import { Messages, MessageGroup, TextMessage } from "@/components/messages";
 export default function Page() {
   const { dispatch } = useAppState();
 
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    addClientRunDynamic,
-  } = useAssistant({
+  const { messages, input, handleInputChange, handleSubmit } = useAssistant({
     utils: { dispatch },
   });
 
-  const popConfetti = React.useCallback(() => {
-    console.log("console confetti!");
-    return "a confetti was popped";
-  }, []);
+  const [files, setFiles] = React.useState<FileList | undefined>(undefined);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    const remove = addClientRunDynamic({
-      name: "popConfetti",
-      description: "A function to pop confetti on the user's screen",
-      parameters: z.object({}),
-      handler: ({}) => popConfetti(),
-    });
+  const onFileInputChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        console.log("file attachment change");
+        setFiles(e.target.files);
+      }
+    },
+    []
+  );
 
-    return remove();
-  }, [popConfetti, addClientRunDynamic]);
+  const onFormSubmit = React.useCallback(
+    (e?: React.FormEvent<HTMLFormElement>) => {
+      e?.preventDefault();
+      handleSubmit(
+        { preventDefault: () => null },
+        { experimental_attachments: files }
+      );
+      setFiles(undefined);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    },
+    [files, handleSubmit]
+  );
 
   const onTextareaKeyDown = (
     e:
@@ -53,7 +58,7 @@ export default function Page() {
   ) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      onFormSubmit();
     }
   };
 
@@ -100,7 +105,7 @@ export default function Page() {
         {/* absolute element */}
         <form
           className="absolute bottom-0 inset-x-0 px-14 pb-6"
-          onSubmit={handleSubmit}
+          onSubmit={onFormSubmit}
         >
           <Textarea
             className="p-4 resize-none"
@@ -110,7 +115,16 @@ export default function Page() {
             onKeyDown={onTextareaKeyDown}
             rightElement={
               <div className="flex gap-x-2 self-start pr-4 pt-4">
-                <IconButton variant="ghost" icon={<LuPaperclip />} />
+                <IconButton asChild variant="ghost" icon={<LuPaperclip />}>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      className="absolute inset-0 opacity-0"
+                      onChange={onFileInputChange}
+                      ref={fileInputRef}
+                    />
+                  </div>
+                </IconButton>
                 <IconButton type="submit" icon={<LuArrowUp />} />
               </div>
             }

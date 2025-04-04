@@ -38,8 +38,6 @@ export async function POST(req: Request) {
     | CoreMessage[]
     | Omit<Message, "id">[];
 
-  serverAwareTools.debug();
-
   const result = streamText({
     maxSteps: 5,
     model: openai("gpt-4o"),
