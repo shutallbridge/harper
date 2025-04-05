@@ -7,7 +7,7 @@ function PanelHeader(props: PanelHeaderProps) {
 
   return (
     <div
-      className={cn("flex-none p-6 border-b border-gray-200", className)}
+      className={cn("flex-none p-4 border-b border-gray-200", className)}
       {...rest}
     >
       {children}

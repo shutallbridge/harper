@@ -6,7 +6,7 @@ function PanelContent(props: PanelContentProps) {
   const { children, className, ...rest } = props;
 
   return (
-    <div className={cn("flex-1", className)} {...rest}>
+    <div className={cn("flex-1 overflow-auto", className)} {...rest}>
       {children}
     </div>
   );

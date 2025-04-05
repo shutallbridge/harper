@@ -112,10 +112,10 @@ function Screen(props: ScreenProps) {
   return (
     <>
       <PanelHeader className="flex justify-between items-center">
-        <h1 className="text-gray-950 font-medium text-xl">
+        <h1 className="text-gray-950 font-medium text-base">
           Register New Candidate
         </h1>
-        <Button>Save</Button>
+        <Button size="sm">Save</Button>
       </PanelHeader>
       <PanelContent>
         <form className="p-6 space-y-12">

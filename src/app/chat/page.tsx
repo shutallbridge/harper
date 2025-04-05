@@ -65,21 +65,21 @@ export default function Page() {
   return (
     <>
       <PanelHeader className="flex justify-between items-center">
-        <div className="flex gap-x-3">
+        <div className="flex gap-x-3 items-center">
           <div className="w-6 h-6 rounded-full bg-fuchsia-300" />
           <h1 className="text-base font-medium text-gray-950">Harper</h1>
         </div>
         <div className="flex gap-x-3">
-          <Button icon={<LuMessageSquare />} variant="secondary">
+          <Button icon={<LuMessageSquare />} size="sm" variant="secondary">
             New Chat
           </Button>
-          <Button icon={<LuHistory />} variant="secondary">
+          <Button icon={<LuHistory />} size="sm" variant="secondary">
             Past Chats
           </Button>
         </div>
       </PanelHeader>
-      <PanelContent>
-        <Messages className="px-14 pt-6">
+      <PanelContent className="flex flex-col">
+        <Messages className="flex-1 px-8 pt-6">
           {messages.map((message) => (
             <MessageGroup
               key={message.id}
@@ -104,7 +104,7 @@ export default function Page() {
 
         {/* absolute element */}
         <form
-          className="absolute bottom-0 inset-x-0 px-14 pb-6"
+          className="sticky bottom-0 inset-x-0 px-14 pb-6"
           onSubmit={onFormSubmit}
         >
           <Textarea
@@ -115,7 +115,12 @@ export default function Page() {
             onKeyDown={onTextareaKeyDown}
             rightElement={
               <div className="flex gap-x-2 self-start pr-4 pt-4">
-                <IconButton asChild variant="ghost" icon={<LuPaperclip />}>
+                <IconButton
+                  asChild
+                  size="sm"
+                  variant="ghost"
+                  icon={<LuPaperclip />}
+                >
                   <div className="relative">
                     <input
                       type="file"
@@ -125,7 +130,7 @@ export default function Page() {
                     />
                   </div>
                 </IconButton>
-                <IconButton type="submit" icon={<LuArrowUp />} />
+                <IconButton size="sm" type="submit" icon={<LuArrowUp />} />
               </div>
             }
           />

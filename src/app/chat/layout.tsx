@@ -17,13 +17,23 @@ export default function Layout(props: LayoutProps) {
   const { state: appState } = useAppState();
 
   return (
-    <main className="flex-1 flex gap-x-4">
-      <Panel asChild className="flex-1 relative">
+    <main className="min-h-0 flex-1 flex gap-x-4">
+      <Panel asChild className="flex-1 w-full relative">
         <motion.main layout transition={{ type: "tween" }}>
           {children}
         </motion.main>
       </Panel>
-      {appState.status === "screen" ? side : null}
+      {appState.status === "screen" ? (
+        <Panel asChild className="w-2xl">
+          <motion.section
+            initial={{ x: 500 }}
+            animate={{ x: 0 }}
+            transition={{ type: "tween" }}
+          >
+            {side}
+          </motion.section>
+        </Panel>
+      ) : null}
     </main>
   );
 }

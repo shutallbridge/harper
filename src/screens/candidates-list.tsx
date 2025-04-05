@@ -90,7 +90,7 @@ function Screen(props: ScreenProps) {
   return (
     <>
       <PanelHeader className="flex justify-between items-center">
-        <h1 className="text-gray-950 font-medium text-xl">Candidates List</h1>
+        <h1 className="text-gray-950 font-medium text-base">Candidates List</h1>
         <Button>Add New</Button>
       </PanelHeader>
       <PanelContent>
