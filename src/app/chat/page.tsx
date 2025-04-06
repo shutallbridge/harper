@@ -1,20 +1,15 @@
 "use client";
 
 import React from "react";
-import {
-  LuMessageSquare,
-  LuHistory,
-  LuPaperclip,
-  LuArrowUp,
-  LuX,
-} from "react-icons/lu";
+import Image from "next/image";
+import Balancer from "react-wrap-balancer";
+import { LuMessageSquare, LuHistory } from "react-icons/lu";
 import { MdPictureAsPdf } from "react-icons/md";
 
 import { useAssistant } from "@/lib/assistant";
 import { useAppState } from "@/lib/app-context";
 import { Button } from "@/components/button";
-import { IconButton } from "@/components/icon-button";
-import { Textarea } from "@/components/textarea";
+import { MessageComposer } from "@/components/message-composer";
 import { PanelHeader, PanelContent } from "@/components/panel";
 import {
   Messages,
@@ -23,6 +18,34 @@ import {
   ResourceMessage,
 } from "@/components/messages";
 import { FullModal } from "@/components/full-modal";
+
+type StarterPrompt = {
+  image: string;
+  prompt: string;
+  file?: {
+    fileUrl: string;
+    fileName: string;
+  };
+};
+
+const starterPrompts: StarterPrompt[] = [
+  {
+    image: "/resume.png",
+    prompt: "Help me register this candidate based on their PDF resume.",
+    file: {
+      fileUrl: "/202504 Shu Takahashi Resume.pdf",
+      fileName: "202504 Shu Takahashi Resume.pdf",
+    },
+  },
+  {
+    image: "/list.png",
+    prompt: "Show me a list of all candidates",
+  },
+  {
+    image: "/question.png",
+    prompt: "I'm curious. Tell me what this app is about.",
+  },
+];
 
 type PdfPreviewState =
   | {
@@ -55,89 +78,61 @@ function pdfPreviewReducer(
 }
 
 export default function Page() {
-  const [pdfPreview, pdfPreviewDispatch] = React.useReducer(pdfPreviewReducer, {
-    isOpen: false,
-  });
+  const [filePreview, filePreviewDispatch] = React.useReducer(
+    pdfPreviewReducer,
+    {
+      isOpen: false,
+    }
+  );
 
   const { dispatch: appDispatch } = useAppState();
 
-  const { messages, input, handleInputChange, handleSubmit } = useAssistant({
+  const { messages, append } = useAssistant({
     utils: { dispatch: appDispatch },
   });
 
-  const [files, setFiles] = React.useState<FileList | undefined>(undefined);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const handleNewMessage = React.useCallback(
+    (args: { message: string; files?: FileList }) => {
+      const { message, files } = args;
+      append(
+        { role: "user", content: message },
+        { experimental_attachments: files }
+      );
+    },
+    [append]
+  );
 
-  const onFileInputChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        setFiles(e.target.files);
+  const onStarterPromptClick = React.useCallback(
+    async (args: StarterPrompt) => {
+      const { prompt, file: starterFile } = args;
+
+      if (starterFile) {
+        const response = await fetch(starterFile.fileUrl);
+        const blob = await response.blob();
+        const file = new File([blob], starterFile.fileName, {
+          type: "application/pdf",
+        });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        handleNewMessage({ message: prompt, files: dataTransfer.files });
+      } else {
+        handleNewMessage({ message: prompt });
       }
+    },
+    [handleNewMessage]
+  );
+
+  // todo: manage with a modal manager
+  const openFilePreview = React.useCallback(
+    (args: { title: string; url: string }) => {
+      const { title, url } = args;
+      filePreviewDispatch({ type: "open", title, url });
     },
     []
   );
-
-  const onFileRemove = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e.preventDefault();
-      setFiles(undefined);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    },
-    []
-  );
-
-  const onPdfPreviewOpen = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e.preventDefault();
-      if (!files) return;
-
-      pdfPreviewDispatch({
-        type: "open",
-        title: files[0].name,
-        url: URL.createObjectURL(files[0]),
-      });
-    },
-    [files]
-  );
-
-  const onPdfPreviewClose = React.useCallback(() => {
-    pdfPreviewDispatch({ type: "close" });
+  const closeFilePreview = React.useCallback(() => {
+    filePreviewDispatch({ type: "close" });
   }, []);
-
-  const handleNewMessage = React.useCallback(() => {
-    handleSubmit(
-      { preventDefault: () => null },
-      { experimental_attachments: files }
-    );
-    setFiles(undefined);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }, [files, handleSubmit]);
-
-  const onFormSubmit = React.useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      handleNewMessage();
-    },
-    [handleNewMessage]
-  );
-
-  const onTextareaKeyDown = React.useCallback(
-    (
-      e:
-        | React.KeyboardEvent<HTMLTextAreaElement>
-        | React.KeyboardEvent<HTMLInputElement>
-    ) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        handleNewMessage();
-      }
-    },
-    [handleNewMessage]
-  );
 
   return (
     <>
@@ -155,125 +150,143 @@ export default function Page() {
           </Button>
         </div>
       </PanelHeader>
-      <PanelContent className="flex flex-col">
-        <Messages className="flex-1 px-8 pt-6">
-          {messages.map((message) => (
-            <MessageGroup
-              key={message.id}
-              align={message.role === "user" ? "right" : "left"}
-            >
-              {message.parts.map((part, i) => {
-                switch (part.type) {
-                  case "text": {
-                    return (
-                      <TextMessage
-                        variant={message.role === "user" ? "bubble" : "inline"}
-                        key={`${message.id}-${i}`}
-                      >
-                        {part.text}
-                      </TextMessage>
-                    );
-                  }
-                }
-              })}
+      <PanelContent className="flex flex-col items-center px-6">
+        {/* new chat content */}
+        {messages.length === 0 ? (
+          <div className="max-w-3xl space-y-8 mt-10 mb-10">
+            <h2 className="text-2xl font-medium text-center">
+              Hi there, how can I help you today?
+            </h2>
+            {/* message composer */}
+            <MessageComposer
+              onMessageComposerSubmit={({ message, files }) =>
+                handleNewMessage({ message, files })
+              }
+              className="sticky bottom-0 inset-x-0 w-full"
+            />
 
-              {/* attachments */}
-              {message.experimental_attachments
-                ? message.experimental_attachments
-                    .filter((attachment) =>
-                      attachment.contentType?.startsWith("application/pdf")
-                    )
-                    .map((attachment, index) => (
-                      <ResourceMessage
-                        key={`${message.id}-${index}`}
-                        title={attachment.name ?? ""}
-                        subtitle="PDF"
-                        icon={<MdPictureAsPdf />}
-                        onClick={() => {
-                          pdfPreviewDispatch({
-                            type: "open",
-                            title: attachment.name ?? "",
-                            url: attachment.url,
-                          });
-                        }}
-                      />
-                    ))
-                : null}
-            </MessageGroup>
-          ))}
-        </Messages>
-
-        {/* absolute element */}
-        <form
-          className="sticky bottom-0 inset-x-0 px-14 pb-6"
-          onSubmit={onFormSubmit}
-        >
-          <Textarea
-            className="p-4 resize-none"
-            unwrapped
-            minRows={2}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={onTextareaKeyDown}
-            bottomElement={
-              <div className="flex flex-col">
-                <div className="flex gap-x-2 self-end p-4">
-                  <IconButton
-                    asChild
-                    size="sm"
-                    variant="ghost"
-                    icon={<LuPaperclip />}
+            {/* starter prompts */}
+            <div className="space-y-4">
+              <div className="relative flex items-center justify-center">
+                <hr className="absolute w-full border-gray-200" />
+                <div className="relative bg-white px-3 py-2 text-sm font-medium text-fuchsia-900 border border-y-fuchsia-900 rounded-full">
+                  Or try these
+                </div>
+              </div>
+              <div className="flex gap-x-3 items-start">
+                {starterPrompts.map((starterPrompt, index) => (
+                  <button
+                    key={index}
+                    onClick={() => onStarterPromptClick(starterPrompt)}
+                    className="space-y-2 group cursor-pointer"
                   >
-                    <div className="relative">
-                      <input
-                        type="file"
-                        accept=".pdf,application/pdf"
-                        className="absolute inset-0 opacity-0"
-                        onChange={onFileInputChange}
-                        ref={fileInputRef}
+                    <div className="border border-gray-300 rounded-md px-8 py-4 transition group-hover:shadow">
+                      <Image
+                        src={starterPrompt.image}
+                        width={621}
+                        height={465}
+                        alt=""
+                        className="group-hover:scale-[1.05] transition"
                       />
                     </div>
-                  </IconButton>
-                  <IconButton size="sm" type="submit" icon={<LuArrowUp />} />
-                </div>
-                {files ? (
-                  <div className="bg-fuchsia-50 p-4 border-t border-gray-300">
-                    {Array.from(files).map((file, i) => (
-                      <div key={i} className="inline-block relative group">
-                        <ResourceMessage
-                          title={file.name}
-                          subtitle={`${file.type} / ${(
-                            file.size /
-                            (1024 * 1024)
-                          ).toFixed(1)}MB`}
-                          icon={<MdPictureAsPdf />}
-                          onClick={onPdfPreviewOpen}
-                        />
-                        <button
-                          onClick={onFileRemove}
-                          className="absolute hidden group-hover:block top-0 left-0 -translate-x-1/2 -translate-y-1/2 bg-fuchsia-950 text-white rounded-full p-0.5"
-                        >
-                          <LuX />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                    <div className="text-gray-800">{starterPrompt.prompt}</div>
+                  </button>
+                ))}
               </div>
-            }
-          />
-        </form>
+            </div>
+
+            {/* more information section */}
+            <article className="space-y-2">
+              <p className="text-sm text-gray-600 text-center">
+                <Balancer>
+                  Harper is a fictional ERP platform designed to help businesses
+                  with various operations. It serves as a demo app for a library
+                  providing AI-native interface features to Typescript
+                  developers.
+                </Balancer>
+              </p>
+              <a
+                href="https://github.com/shutallbridge/harper"
+                className="block text-sm text-gray-600 underline text-center"
+              >
+                Learn more about it here
+              </a>
+            </article>
+          </div>
+        ) : null}
+
+        {/* existing chat content */}
+        {messages.length > 0 ? (
+          <>
+            {/* message content */}
+            <Messages className="flex-1 pt-6 w-full max-w-3xl">
+              {messages.map((message) => (
+                <MessageGroup
+                  key={message.id}
+                  align={message.role === "user" ? "right" : "left"}
+                >
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case "text": {
+                        return (
+                          <TextMessage
+                            variant={
+                              message.role === "user" ? "bubble" : "inline"
+                            }
+                            key={`${message.id}-${i}`}
+                          >
+                            {part.text}
+                          </TextMessage>
+                        );
+                      }
+                    }
+                  })}
+
+                  {/* attachments */}
+                  {message.experimental_attachments
+                    ? message.experimental_attachments
+                        .filter((attachment) =>
+                          attachment.contentType?.startsWith("application/pdf")
+                        )
+                        .map((attachment, index) => (
+                          <ResourceMessage
+                            key={`${message.id}-${index}`}
+                            title={attachment.name ?? ""}
+                            subtitle="PDF"
+                            icon={<MdPictureAsPdf />}
+                            onClick={() => {
+                              openFilePreview({
+                                title: attachment.name ?? "",
+                                url: attachment.url,
+                              });
+                            }}
+                          />
+                        ))
+                    : null}
+                </MessageGroup>
+              ))}
+            </Messages>
+
+            {/* message composer sticky element */}
+            <MessageComposer
+              onMessageComposerSubmit={({ message, files }) =>
+                handleNewMessage({ message, files })
+              }
+              className="sticky bottom-0 inset-x-0 pb-4 pt-4 w-full max-w-3xl"
+            />
+          </>
+        ) : null}
       </PanelContent>
 
       {/* full-modal PDF */}
       <FullModal
-        open={pdfPreview.isOpen}
-        onCloseClick={onPdfPreviewClose}
-        title={pdfPreview.isOpen ? pdfPreview.title : ""}
+        open={filePreview.isOpen}
+        onCloseClick={closeFilePreview}
+        title={filePreview.isOpen ? filePreview.title : ""}
       >
-        {pdfPreview.isOpen && (
+        {filePreview.isOpen && (
           <embed
-            src={pdfPreview.url}
+            src={filePreview.url}
             type="application/pdf"
             className="w-full h-full"
           />

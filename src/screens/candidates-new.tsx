@@ -125,7 +125,7 @@ function Screen(props: ScreenProps) {
                 Personal Information
               </h1>
             </div>
-            <div className="flex gap-x-6">
+            <div className="flex gap-x-4">
               <Input
                 type="text"
                 label="First name"
