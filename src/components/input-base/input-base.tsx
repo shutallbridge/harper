@@ -31,7 +31,7 @@ function InputBase(props: InputBaseProps) {
   return (
     <div
       className={cn(
-        "w-full flex flex-col bg-white border border-gray-400 rounded-md overflow-hidden focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-fuchsia-500/50"
+        "w-full flex flex-col bg-white border border-gray-300 rounded-md overflow-hidden focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-fuchsia-500/50"
       )}
     >
       {topElement ? topElement : null}

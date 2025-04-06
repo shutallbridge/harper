@@ -10,9 +10,9 @@ function MessageGroup(props: MessageGroupProps) {
   return (
     <div
       className={cn(
-        "flex",
-        [align === "left" && "justify-start"],
-        [align === "right" && "justify-end"],
+        "flex flex-col gap-y-2",
+        [align === "left" && "items-start"],
+        [align === "right" && "items-end"],
         className
       )}
       {...rest}

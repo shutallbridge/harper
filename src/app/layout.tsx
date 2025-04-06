@@ -24,7 +24,7 @@ export default function RootLayout({
     <html className="h-full" lang="en">
       <Providers>
         <body
-          className={`${inter.variable} font-sans h-full bg-fuchsia-50 p-4 flex flex-col gap-y-3`}
+          className={`${inter.variable} font-sans h-full relative bg-fuchsia-50 p-4 flex flex-col gap-y-3`}
         >
           <TopNavbar />
           {children}
