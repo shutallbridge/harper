@@ -1,3 +1,5 @@
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
 import { streamText, type CoreMessage, type Message } from "ai";
 import { openai } from "@ai-sdk/openai";
 
@@ -6,8 +8,6 @@ import {
   toVercelManifestsAndServerHandlers,
 } from "@/lib/tools";
 import { serverAwareTools } from "@/lib/app-tools";
-
-export const maxDuration = 30;
 
 const initialMessages: CoreMessage[] | Omit<Message, "id">[] = [
   {
@@ -20,7 +20,40 @@ const initialMessages: CoreMessage[] | Omit<Message, "id">[] = [
   },
 ];
 
+export const maxDuration = 30;
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  analytics: true,
+  limiter: Ratelimit.slidingWindow(30, "6 h"),
+});
+
+function getIp(headers: Headers) {
+  const forwardedFor = headers.get("x-forwarded-for");
+  const realIp = headers.get("x-real-ip");
+
+  if (forwardedFor) {
+    return forwardedFor.split(", ")[0].trim();
+  }
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  return null;
+}
+
 export async function POST(req: Request) {
+  const ip = getIp(req.headers) ?? "ip";
+
+  const { success } =
+    process.env.NODE_ENV === "production"
+      ? await ratelimit.limit(ip)
+      : { success: true };
+
+  if (!success) {
+    return new Response("Too many requests", { status: 429 });
+  }
+
   const { messages: requestMessages, toolManifests } = (await req.json()) as {
     messages: CoreMessage[] | Omit<Message, "id">[];
     toolManifests: JsonToolManifest[];
