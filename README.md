@@ -1,5 +1,8 @@
 # Harper
 
+> [!NOTE]
+> Check out the Harper ERP demo at [https://harper-tawny.vercel.app](https://harper-tawny.vercel.app).
+
 ## About the Project
 
 Harper is a fictional ERP platform designed to help businesses with various operations. Currently it's scope is limited to its ATS (application tracking system).
