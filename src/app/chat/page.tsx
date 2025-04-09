@@ -87,9 +87,13 @@ export default function Page() {
 
   const { dispatch: appDispatch } = useAppState();
 
-  const { messages, append } = useAssistant({
+  const { messages, append, setMessages } = useAssistant({
     utils: { dispatch: appDispatch },
   });
+
+  const onNewChat = React.useCallback(() => {
+    setMessages([]);
+  }, [setMessages]);
 
   const handleNewMessage = React.useCallback(
     (args: { message: string; files?: FileList }) => {
@@ -142,7 +146,12 @@ export default function Page() {
           <h1 className="text-base font-medium text-gray-950">Harper</h1>
         </div>
         <div className="flex gap-x-3">
-          <Button icon={<LuMessageSquare />} size="sm" variant="secondary">
+          <Button
+            icon={<LuMessageSquare />}
+            onClick={onNewChat}
+            size="sm"
+            variant="secondary"
+          >
             New Chat
           </Button>
           <Button icon={<LuHistory />} size="sm" variant="secondary">
