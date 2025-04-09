@@ -61,6 +61,7 @@ function MessageComposer(props: MessageComposerProps) {
 
   const handleMessageComposerSubmit = React.useCallback(() => {
     onMessageComposerSubmit({ message, files });
+    setMessage("");
     setFiles(undefined);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
