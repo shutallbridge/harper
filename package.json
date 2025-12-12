@@ -18,7 +18,7 @@
     "ai": "^4.2.0",
     "clsx": "^2.1.1",
     "motion": "^12.6.3",
-    "next": "^16.0.7",
+    "next": "^16.0.10",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-textarea-autosize": "^8.5.8",
